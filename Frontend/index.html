@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Travel Agent</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .tagline {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .tab {
+            padding: 15px 30px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1em;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .results {
+            margin-top: 30px;
+        }
+
+        .result-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 2px solid #e0e0e0;
+        }
+
+        .result-card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .price {
+            font-size: 1.5em;
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .flight-details, .accommodation-details {
+            display: grid;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .ai-recommendation {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>✈️ AI Travel Agent</h1>
+            <p class="tagline">Find the best deals, plan trips, and discover amazing stays</p>
+        </header>
+
+        <div class="main-content">
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('trip-planner')">Trip Planner</button>
+                <button class="tab" onclick="switchTab('flights')">Flights</button>
+                <button class="tab" onclick="switchTab('last-minute')">Last-Minute Deals</button>
+                <button class="tab" onclick="switchTab('accommodations')">Accommodations</button>
+            </div>
+
+            <!-- Trip Planner Tab -->
+            <div id="trip-planner" class="tab-content active">
+                <h2>Plan Your Perfect Trip</h2>
+                <p style="margin: 15px 0; color: #666;">Let AI help you plan a complete trip within your budget!</p>
+                
+                <form id="tripPlannerForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>From (Airport Code)</label>
+                            <input type="text" id="trip-origin" placeholder="e.g., JFK" maxlength="3" required>
+                        </div>
+                        <div class="form-group">
+                            <label>To (Airport Code)</label>
+                            <input type="text" id="trip-destination" placeholder="e.g., LAX" maxlength="3" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Departure Date</label>
+                            <input type="date" id="trip-departure" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Return Date</label>
+                            <input type="date" id="trip-return" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Total Budget ($)</label>
+                            <input type="number" id="trip-budget" placeholder="e.g., 1500" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Passengers</label>
+                            <input type="number" id="trip-passengers" value="1" min="1" max="9" required>
+                        </div>
+                    </div>
+                    
+                    <button type="submit">🎯 Plan My Trip</button>
+                </form>
+                
+                <div id="trip-results"></div>
+            </div>
+
+            <!-- Flights Tab -->
+            <div id="flights" class="tab-content">
+                <h2>Search Flights</h2>
+                
+                <form id="flightSearchForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>From (Airport Code)</label>
+                            <input type="text" id="flight-origin" placeholder="e.g., JFK" maxlength="3" required>
+                        </div>
+                        <div class="form-group">
+                            <label>To (Airport Code)</label>
+                            <input type="text" id="flight-destination" placeholder="e.g., LAX" maxlength="3" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Departure Date</label>
+                            <input type="date" id="flight-departure" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Return Date (Optional)</label>
+                            <input type="date" id="flight-return">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Passengers</label>
+                        <input type="number" id="flight-passengers" value="1" min="1" max="9" required>
+                    </div>
+                    
+                    <button type="submit">🔍 Search Flights</button>
+                </form>
+                
+                <div id="flight-results"></div>
+            </div>
+
+            <!-- Last-Minute Deals Tab -->
+            <div id="last-minute" class="tab-content">
+                <h2>Last-Minute Flight Deals</h2>
+                <p style="margin: 15px 0; color: #666;">Discover amazing deals for spontaneous trips!</p>
+                
+                <form id="lastMinuteForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>From (Airport Code)</label>
+                            <input type="text" id="lastminute-origin" placeholder="e.g., JFK" maxlength="3" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Max Price ($)</label>
+                            <input type="number" id="lastminute-maxprice" placeholder="e.g., 500" value="500" required>
+                        </div>
+                    </div>
+                    
+                    <button type="submit">🎲 Find Deals</button>
+                </form>
+                
+                <div id="lastminute-results"></div>
+            </div>
+
+            <!-- Accommodations Tab -->
+            <div id="accommodations" class="tab-content">
+                <h2>Find Accommodations</h2>
+                
+                <form id="accommodationForm">
+                    <div class="form-group">
+                        <label>Location (City)</label>
+                        <input type="text" id="acc-location" placeholder="e.g., Los Angeles" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Check-in Date</label>
+                            <input type="date" id="acc-checkin" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Check-out Date</label>
+                            <input type="date" id="acc-checkout" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Guests</label>
+                            <input type="number" id="acc-guests" value="2" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Max Price Per Night ($)</label>
+                            <input type="number" id="acc-maxprice" placeholder="e.g., 150">
+                        </div>
+                    </div>
+                    
+                    <button type="submit">🏠 Search Stays</button>
+                </form>
+                
+                <div id="accommodation-results"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
