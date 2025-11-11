@@ -1,6 +1,20 @@
+<div align="center">
+
 # ✈️ AI Travel Agent
 
-An intelligent travel assistant that helps you find the best flight deals, plan trips within your budget, discover last-minute offers, and search for Airbnb accommodations.
+### Your Intelligent Travel Companion
+
+![AI Travel Agent](./images/image.png)
+
+*An intelligent travel assistant that helps you find the best flight deals, plan trips within your budget, discover last-minute offers, and search for Airbnb accommodations.*
+
+[![License](https://img.shields.io/badge/license-ISC-blue.svg)](LICENSE)
+[![Node.js](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/vidhipitroda/AI-travel-agent-/pulls)
+
+</div>
+
+---
 
 ## 🌟 Features
 
